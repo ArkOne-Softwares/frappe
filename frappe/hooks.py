@@ -2,7 +2,7 @@ import os
 
 from . import __version__ as app_version
 
-app_name = "arkone erp"
+app_name = "frappe"
 app_title = "Arkone ERP"
 app_publisher = "Frappe Technologies"
 app_description = "Full stack web framework with Python, Javascript, MariaDB, Redis, Node"
