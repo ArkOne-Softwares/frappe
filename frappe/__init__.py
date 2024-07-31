@@ -50,7 +50,7 @@ from .utils.jinja import (
 )
 
 __version__ = "16.0.0-dev"
-__title__ = "Frappe Framework"
+__title__ = "CRM Framework"
 
 controllers = {}
 local = Local()
