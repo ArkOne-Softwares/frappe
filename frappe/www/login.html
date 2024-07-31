@@ -58,7 +58,7 @@
 	{% if title %}
 	<h4>{{ _(title)}}</h4>
 	{% else %}
-	<h4>{{ _('Login to {0}').format(app_name or _("Arkone ERP")) }}</h4>
+	<h4>{{ _('Login to Arkone ERP')}}</h4>
 	{% endif %}
 </div>
 {% endmacro %}
@@ -139,7 +139,7 @@
 	</section>
 	{%- endif -%}
 	<section class='for-signup {{ "signup-disabled" if disable_signup else "" }}'>
-		{{ logo_section(_('Create a {0} Account').format(app_name or _("Arkone ERP"))) }}
+		{{ logo_section(_('Create a Arkone ERP Account')) }}
 		<div class="login-content page-card">
 			{%- if not disable_signup -%}
 			{{ signup_form_template }}
