@@ -500,6 +500,7 @@ def serve(
 		"0.0.0.0",
 		int(port),
 		application,
+  		reloader_type='stat',
 		exclude_patterns=["test_*"],
 		use_reloader=False if in_test_env else not no_reload,
 		use_debugger=not in_test_env,
