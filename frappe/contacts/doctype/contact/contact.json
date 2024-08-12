@@ -41,7 +41,8 @@
   "department",
   "unsubscribed",
   "id",
-  "city"
+  "city",
+  "metadata"
  ],
  "fields": [
   {
@@ -262,6 +263,11 @@
    "fieldname": "city",
    "fieldtype": "Data",
    "label": "City"
+  },
+  {
+   "fieldname": "metadata",
+   "fieldtype": "JSON",
+   "label": "Metadata"
   }
  ],
  "icon": "fa fa-user",
@@ -269,7 +275,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 05:47:25.201853",
+ "modified": "2024-08-12 05:57:35.190261",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
