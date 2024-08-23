@@ -7,6 +7,18 @@ no_cache: 1
 endblock -%} {%- block footer -%} {%- endblock -%} {% block content %}
 <div class="container">
 	<div class="apps-container">
+		<a class="navbar-brand" href="{{ url_prefix }}{{ home_page or "/" }}">
+			{%- if brand_html -%}
+				{{ brand_html }}
+			{%- elif banner_image -%}
+				<img src='{{ splash_image }}' style="max-height: 120px;">
+			{%- else -%}
+				<span>{{ (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
+			{%- endif -%}
+		</a>
+
+		<hr>
+
 		<div class="title">{{ _('Select an app to continue') }}</div>
 		{% set appsCount = apps|length if apps|length <= 6 else 6 %}
 		<div class="apps" style="grid-template-columns: repeat({{ appsCount }}, 1fr);">
