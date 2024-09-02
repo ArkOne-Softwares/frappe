@@ -42,7 +42,8 @@
   "unsubscribed",
   "id",
   "city",
-  "metadata"
+  "metadata",
+  "last_msg_whatsapp"
  ],
  "fields": [
   {
@@ -268,6 +269,15 @@
    "fieldname": "metadata",
    "fieldtype": "JSON",
    "label": "Metadata"
+  },
+  {
+   "default": "Today",
+   "fieldname": "last_msg_whatsapp",
+   "fieldtype": "Datetime",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Whatsapp Last Message Received At"
   }
  ],
  "icon": "fa fa-user",
@@ -275,7 +285,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 05:57:35.190261",
+ "modified": "2024-09-02 07:12:10.822684",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
