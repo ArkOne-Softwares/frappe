@@ -1,40 +1,41 @@
 :root {
-    --text-base: 14px !important;
-    --primary-color: #007bff;
-    --background-color: #707684;
-    --secondary-color: #7574ff;
-    --white-color: #ffffff;
-    --black-color: #000000;
-    --gray-color: #888;
-    --page-head-height: 50px;
-    --navbar-height: 50px;
+	--text-base: 14px !important;
+	--primary-color: #007bff;
+	--background-color: #707684;
+	--secondary-color: #7574ff;
+	--white-color: #ffffff;
+	--black-color: #000000;
+	--gray-color: #888;
+	--page-head-height: 50px;
+	--navbar-height: 50px;
+	--invert-neutral: #707684;
 }
 
 [data-theme="light"] {
-    .btn-primary {
-        background-color: var(--primary-color);
-    }
-    .btn-primary:active {
-        color: var(--gray-900) !important;
-        background-color: var(--invert-neutral) !important;
-    }
-    .page-container {
-        background-color: var(--bg-color);
-    }
+	.btn-primary {
+		background-color: var(--primary-color);
+	}
+	.btn-primary:active {
+		color: var(--gray-900) !important;
+		background-color: var(--invert-neutral) !important;
+	}
+	.page-container {
+		background-color: var(--bg-color);
+	}
 }
 
 [data-theme="dark"] {
 	.btn-primary {
 		background-color: var(--primary-color);
-        color: var(--gray-50) !important;
+		color: var(--gray-50) !important;
 	}
 	.btn-primary:active {
 		color: var(--gray-50) !important;
 		background-color: var(--invert-neutral) !important;
 	}
-    .page-container {
-        background-color: var(--gray-900);
-    }
+	.page-container {
+		background-color: var(--gray-900);
+	}
 }
 
 .navbar {
@@ -57,7 +58,7 @@
 				font-style: normal;
 				text-decoration: inherit;
 				-webkit-font-smoothing: antialiased;
-				margin-right: .3em;
+				margin-right: 0.3em;
 				display: inline-block;
 				font-size: 24px;
 				transition: 0.2s;
@@ -99,7 +100,6 @@ header {
 	}
 }
 
-
 .layout-side-section {
 	.sidebar-label {
 		color: var(--primary-color);
@@ -120,7 +120,7 @@ header {
 }
 
 .form-control {
-	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 	background-color: #f2f2f2 !important;
 	&:focus {
 		outline: 0;
@@ -163,7 +163,10 @@ symbol#icon-small-down {
 		}
 	}
 }
-.head-title, .form-section .section-head, .form-dashboard-section .section-head, .comment-box .comment-input-header {
+.head-title,
+.form-section .section-head,
+.form-dashboard-section .section-head,
+.comment-box .comment-input-header {
 	color: var(--primary-color);
 }
 .list-subject {
