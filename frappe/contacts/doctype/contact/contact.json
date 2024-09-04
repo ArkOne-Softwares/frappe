@@ -277,7 +277,7 @@
    "in_filter": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Whatsapp Last Message Received At"
+   "label": "Last Updated"
   }
  ],
  "icon": "fa fa-user",
@@ -285,7 +285,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-02 07:12:10.822684",
+ "modified": "2024-09-04 05:59:00.219194",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
