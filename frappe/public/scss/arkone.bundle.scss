@@ -1,7 +1,7 @@
 :root {
 	--text-base: 14px !important;
 	--primary-color: #007bff;
-	--background-color: #707684;
+	--background-color: #9c9c9c;
 	--secondary-color: #7574ff;
 	--white-color: #ffffff;
 	--black-color: #000000;
@@ -73,10 +73,12 @@
 
 	header {
 		.form-control {
+			background-color: transparent;
 			color: var(--white-color);
 			&:focus {
 				border: 0;
 				background-color: var(--white-color) !important;
+				color: var(--black-color);
 			}
 		}
 		ul#navbar-breadcrumbs {
