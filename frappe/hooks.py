@@ -151,51 +151,53 @@ jinja = {
 standard_queries = {"User": "frappe.core.doctype.user.user.user_query"}
 
 doc_events = {
-    "*": {
-        "on_update": [
-            "frappe.desk.notifications.clear_doctype_notifications",
-            "frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
-            "frappe.core.doctype.file.utils.attach_files_to_document",
-            "frappe.automation.doctype.assignment_rule.assignment_rule.apply",
-            "frappe.automation.doctype.assignment_rule.assignment_rule.update_due_date",
-            "frappe.core.doctype.user_type.user_type.apply_permissions_for_non_standard_user_type",
-        ],
-        "after_rename": "frappe.desk.notifications.clear_doctype_notifications",
-        "on_cancel": [
-            "frappe.desk.notifications.clear_doctype_notifications",
-            "frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
-            "frappe.automation.doctype.assignment_rule.assignment_rule.apply",
-        ],
-        "on_trash": [
-            "frappe.desk.notifications.clear_doctype_notifications",
-            "frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
-        ],
-        "on_update_after_submit": [
-            "frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
-            "frappe.automation.doctype.assignment_rule.assignment_rule.apply",
-            "frappe.automation.doctype.assignment_rule.assignment_rule.update_due_date",
-            "frappe.core.doctype.file.utils.attach_files_to_document",
-        ],
-        "on_change": [
-            "frappe.social.doctype.energy_point_rule.energy_point_rule.process_energy_points",
-            "frappe.automation.doctype.milestone_tracker.milestone_tracker.evaluate_milestone",
-        ],
-    },
-    "Event": {
-        "after_insert": "frappe.integrations.doctype.google_calendar.google_calendar.insert_event_in_google_calendar",
-        "on_update": "frappe.integrations.doctype.google_calendar.google_calendar.update_event_in_google_calendar",
-        "on_trash": "frappe.integrations.doctype.google_calendar.google_calendar.delete_event_from_google_calendar",
-    },
-    "Contact": {
-        "after_insert": "frappe.integrations.doctype.google_contacts.google_contacts.insert_contacts_to_google_contacts",
-        "on_update": "frappe.integrations.doctype.google_contacts.google_contacts.update_contacts_to_google_contacts",
-    },
-    "DocType": {
-        "on_update": "frappe.cache_manager.build_domain_restriced_doctype_cache",
-    },
-    "Page": {
-        "on_update": "frappe.cache_manager.build_domain_restriced_page_cache",
-    },
+	"*": {
+		"on_update": [
+			"frappe.desk.notifications.clear_doctype_notifications",
+			"frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
+			"frappe.core.doctype.file.utils.attach_files_to_document",
+			"frappe.automation.doctype.assignment_rule.assignment_rule.apply",
+			"frappe.automation.doctype.assignment_rule.assignment_rule.update_due_date",
+			"frappe.core.doctype.user_type.user_type.apply_permissions_for_non_standard_user_type",
+			"frappe.core.doctype.permission_log.permission_log.make_perm_log",
+		],
+		"after_rename": "frappe.desk.notifications.clear_doctype_notifications",
+		"on_cancel": [
+			"frappe.desk.notifications.clear_doctype_notifications",
+			"frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
+			"frappe.automation.doctype.assignment_rule.assignment_rule.apply",
+		],
+		"on_trash": [
+			"frappe.desk.notifications.clear_doctype_notifications",
+			"frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
+		],
+		"on_update_after_submit": [
+			"frappe.workflow.doctype.workflow_action.workflow_action.process_workflow_actions",
+			"frappe.automation.doctype.assignment_rule.assignment_rule.apply",
+			"frappe.automation.doctype.assignment_rule.assignment_rule.update_due_date",
+			"frappe.core.doctype.file.utils.attach_files_to_document",
+		],
+		"on_change": [
+			"frappe.social.doctype.energy_point_rule.energy_point_rule.process_energy_points",
+			"frappe.automation.doctype.milestone_tracker.milestone_tracker.evaluate_milestone",
+		],
+		"after_delete": ["frappe.core.doctype.permission_log.permission_log.make_perm_log"],
+	},
+	"Event": {
+		"after_insert": "frappe.integrations.doctype.google_calendar.google_calendar.insert_event_in_google_calendar",
+		"on_update": "frappe.integrations.doctype.google_calendar.google_calendar.update_event_in_google_calendar",
+		"on_trash": "frappe.integrations.doctype.google_calendar.google_calendar.delete_event_from_google_calendar",
+	},
+	"Contact": {
+		"after_insert": "frappe.integrations.doctype.google_contacts.google_contacts.insert_contacts_to_google_contacts",
+		"on_update": "frappe.integrations.doctype.google_contacts.google_contacts.update_contacts_to_google_contacts",
+	},
+	"DocType": {
+		"on_update": "frappe.cache_manager.build_domain_restriced_doctype_cache",
+	},
+	"Page": {
+		"on_update": "frappe.cache_manager.build_domain_restriced_page_cache",
+	},
 }
 
 scheduler_events = {
@@ -405,26 +407,27 @@ override_whitelisted_methods = {
 }
 
 ignore_links_on_delete = [
-    "Communication",
-    "ToDo",
-    "DocShare",
-    "Email Unsubscribe",
-    "Activity Log",
-    "File",
-    "Version",
-    "Document Follow",
-    "Comment",
-    "View Log",
-    "Tag Link",
-    "Notification Log",
-    "Email Queue",
-    "Document Share Key",
-    "Integration Request",
-    "Unhandled Email",
-    "Webhook Request Log",
-    "Workspace",
-    "Route History",
-    "Access Log",
+	"Communication",
+	"ToDo",
+	"DocShare",
+	"Email Unsubscribe",
+	"Activity Log",
+	"File",
+	"Version",
+	"Document Follow",
+	"Comment",
+	"View Log",
+	"Tag Link",
+	"Notification Log",
+	"Email Queue",
+	"Document Share Key",
+	"Integration Request",
+	"Unhandled Email",
+	"Webhook Request Log",
+	"Workspace",
+	"Route History",
+	"Access Log",
+	"Permission Log",
 ]
 
 # Request Hooks

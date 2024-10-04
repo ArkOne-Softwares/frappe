@@ -103,9 +103,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 	get_no_result_message() {
 		return `<div class="msg-box no-border">
-			<div>
-				<img src="/assets/frappe/images/ui-states/list-empty-state.svg" alt="Generic Empty State" class="null-state">
-			</div>
+			<svg class="icon icon-xl mb-4" style="stroke: var(--text-light);">
+				<use href="#icon-table"></use>
+			</svg>
 			<p>${__("Nothing to show")}</p>
 		</div>`;
 	}
@@ -1015,9 +1015,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 	show_loading_screen() {
 		const loading_state = `<div class="msg-box no-border">
-			<div>
-				<img src="/assets/frappe/images/ui-states/list-empty-state.svg" alt="Generic Empty State" class="null-state">
-			</div>
+			<svg class="icon icon-xl mb-4" style="stroke: var(--text-light);">
+				<use href="#icon-table"></use>
+			</svg>
 			<p>${__("Loading")}...</p>
 		</div>`;
 
@@ -1335,7 +1335,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		raise && this.toggle_message(false);
 
 		return this.filters
-			.filter((f) => f.get_value())
+			.filter((f) => f.get_value?.())
 			.map((f) => {
 				var v = f.get_value();
 				// hidden fields dont have $input
