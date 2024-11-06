@@ -19,6 +19,7 @@ import json
 import os
 import typing
 from datetime import datetime
+from functools import singledispatchmethod
 
 import click
 
@@ -40,6 +41,7 @@ from frappe.model.base_document import (
 from frappe.model.document import Document
 from frappe.model.workflow import get_workflow_name
 from frappe.modules import load_doctype_module
+from frappe.types import DocRef
 from frappe.utils import cast, cint, cstr
 
 DEFAULT_FIELD_LABELS = {
@@ -57,10 +59,20 @@ DEFAULT_FIELD_LABELS = {
 }
 
 
-def get_meta(doctype, cached=True) -> "_Meta":
-	cached = cached and isinstance(doctype, str)
-	if cached and (meta := frappe.cache.hget("doctype_meta", doctype)):
-		return meta
+def get_meta(doctype: str | DocRef | Document, cached=True) -> "_Meta":
+	"""Get metadata for a doctype.
+
+	Args:
+	    doctype: The doctype as a string, DocRef, or Document object.
+	    cached: Whether to use cached metadata (default: True).
+
+	Returns:
+	    Meta object for the given doctype.
+	"""
+	doctype_name = getattr(doctype, "doctype", doctype)
+	if cached and not isinstance(doctype, Document):
+		if meta := frappe.cache.hget("doctype_meta", doctype_name):
+			return meta
 
 	meta = Meta(doctype)
 	frappe.cache.hset("doctype_meta", meta.name, meta)
@@ -112,12 +124,23 @@ class Meta(Document):
 		frappe._dict(fieldname="owner", fieldtype="Data"),
 	)
 
-	def __init__(self, doctype):
-		if isinstance(doctype, Document):
-			super().__init__(doctype.as_dict())
-		else:
-			super().__init__("DocType", doctype)
+	@singledispatchmethod
+	def __init__(self, arg):
+		raise TypeError(f"Unsupported argument type: {type(arg)}")
 
+	@__init__.register(str)
+	def _(self, doctype):
+		super().__init__("DocType", doctype)
+		self.process()
+
+	@__init__.register(DocRef)
+	def _(self, doc_ref):
+		super().__init__("DocType", doc_ref.doctype)
+		self.process()
+
+	@__init__.register(Document)
+	def _(self, doc):
+		super().__init__(doc.as_dict())
 		self.process()
 
 	def load_from_db(self):
