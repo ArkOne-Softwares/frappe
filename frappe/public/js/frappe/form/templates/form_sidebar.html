@@ -18,30 +18,6 @@
 		{% endif %}
 	</div>
 </div>
-{% if frm.meta.beta %}
-<div class="sidebar-section">
-	<p><label class="indicator-pill yellow" title="{{ __("This feature is brand new and still experimental") }}">{{ __("Experimental") }}</label></p>
-	<div><a class="small text-muted" href="https://github.com/frappe/{{ frappe.boot.module_app[frappe.scrub(frm.meta.module)] }}/issues/new"
-			target="_blank">
-		{{ __("Report bug") }}</a></div>
-
-</div>
-{% endif %}
-<div class="sidebar-section sidebar-rating hide">
-	<div style="position: relative;">
-		<a class="strong badge-hover">
-			<span>{%= __("Feedback") %}</span>
-		</a>
-	</div>
-	<div class="rating-icons"></div>
-</div>
-<div class="sidebar-section hidden">
-	{% if (frappe.help.has_help(doctype)) { %}
-	<div>
-		<a class="help-link list-link" data-doctype="{{ doctype }}">{{ __("Help") }}</a>
-	</div>
-	{% } %}
-</div>
 <div class="sidebar-section form-assignments">
 	<div>
 		<span class="form-sidebar-items">

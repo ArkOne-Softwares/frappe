@@ -568,12 +568,6 @@ standard_help_items = [
         "route": "/app/system-health-report",
         "is_standard": 1,
     },
-    {
-        "item_label": "Frappe Support",
-        "item_type": "Route",
-        "route": "https://frappe.io/support",
-        "is_standard": 1,
-    },
 ]
 
 # log doctype cleanups to automatically add in log settings
