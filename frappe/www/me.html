@@ -16,6 +16,8 @@
 </style>
 
 
+{%- if apps|length > 0 -%}
+{% set appsCount = apps|length if apps|length <= 6 else 6 %}
 <div class="portal-container">
 	<div class="apps-container">
 		<a class="navbar-brand" href="{{ url_prefix }}{{ home_page or "/" }}">
@@ -29,7 +31,7 @@
 		</a>
 
 		<div class="title">{{ _('Select an app to continue') }}</div>
-		{% set appsCount = apps|length if apps|length <= 6 else 6 %}
+		
 		<div class="apps" style="grid-template-columns: repeat({{ appsCount }}, 1fr);">
 			{% for app in apps %}
 			<a href="{{ app.route }}" class="app-icon">
@@ -62,8 +64,9 @@
 		</div>
 	</div>
 </div>
+{%- endif -%}
 
-<div class="portal-container">
+<div class="portal-container" style="min-width: 300px;">
 	<div class="portal-section head">
 		<div class="title">{{_("Settings")}}</div>
 		<div>
