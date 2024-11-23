@@ -53,7 +53,11 @@ frappe.ui.Sidebar = class Sidebar {
 				});
 		}
 
-		this.setup_app_switcher();
+		// this.setup_app_switcher();
+		frappe.boot.app_data_map = {};
+		for (var app of frappe.boot.app_data) {
+			frappe.boot.app_data_map[app.app_name] = app;
+		}
 	}
 
 	set_all_pages() {
@@ -69,78 +73,78 @@ frappe.ui.Sidebar = class Sidebar {
 		frappe.current_app = frappe.boot.app_data[0].app_name;
 	}
 
-	setup_app_switcher() {
-		let app_switcher_menu = $(".app-switcher-menu");
+	// setup_app_switcher() {
+		// let app_switcher_menu = $(".app-switcher-menu");
 
-		$(".app-switcher-dropdown").on("click", () => {
-			app_switcher_menu.toggleClass("hidden");
-		});
+		// $(".app-switcher-dropdown").on("click", () => {
+		// 	app_switcher_menu.toggleClass("hidden");
+		// });
 
-		// hover out of the sidebar
-		this.wrapper.find(".body-sidebar").on("mouseleave", () => {
-			app_switcher_menu.addClass("hidden");
+		// // hover out of the sidebar
+		// this.wrapper.find(".body-sidebar").on("mouseleave", () => {
+		// 	app_switcher_menu.addClass("hidden");
 
-			// hide any expanded menus as they leave a blank space in the sidebar
-			this.wrapper.find(".drop-icon[data-state='opened'").click();
-		});
+		// 	// hide any expanded menus as they leave a blank space in the sidebar
+		// 	this.wrapper.find(".drop-icon[data-state='opened'").click();
+		// });
 
-		frappe.boot.app_data_map = {};
-		this.add_private_app(app_switcher_menu);
+		// frappe.boot.app_data_map = {};
+		// this.add_private_app(app_switcher_menu);
 
-		for (var app of frappe.boot.app_data) {
-			frappe.boot.app_data_map[app.app_name] = app;
-			if (app.workspaces?.length) {
-				this.add_app_item(app, app_switcher_menu);
-			}
-		}
-		this.add_website_select(app_switcher_menu);
-		this.setup_select_app(app_switcher_menu);
-	}
+		// for (var app of frappe.boot.app_data) {
+		// 	frappe.boot.app_data_map[app.app_name] = app;
+			// if (app.workspaces?.length) {
+			// 	this.add_app_item(app, app_switcher_menu);
+			// }
+		// }
+		// this.add_website_select(app_switcher_menu);
+		// this.setup_select_app(app_switcher_menu);
+	// }
 
-	add_app_item(app, app_switcher_menu) {
-		$(`<div class="app-item" data-app-name="${app.app_name}"
-			data-app-route="${app.app_route}">
-			<a>
-				<div class="sidebar-item-icon">
-					<img
-						class="app-logo"
-						src="${app.app_logo_url}"
-						alt="${__("App Logo")}"
-					>
-				</div>
-				<span class="app-item-title">${app.app_title}</span>
-			</a>
-		</div>`).appendTo(app_switcher_menu);
-	}
+	// add_app_item(app, app_switcher_menu) {
+	// 	$(`<div class="app-item" data-app-name="${app.app_name}"
+	// 		data-app-route="${app.app_route}">
+	// 		<a>
+	// 			<div class="sidebar-item-icon">
+	// 				<img
+	// 					class="app-logo"
+	// 					src="${app.app_logo_url}"
+	// 					alt="${__("App Logo")}"
+	// 				>
+	// 			</div>
+	// 			<span class="app-item-title">${app.app_title}</span>
+	// 		</a>
+	// 	</div>`).appendTo(app_switcher_menu);
+	// }
 
-	add_private_app(app_switcher_menu) {
-		let private_pages = this.all_pages.filter((p) => p.public === 0);
-		if (private_pages.length === 0) return;
+	// add_private_app(app_switcher_menu) {
+	// 	let private_pages = this.all_pages.filter((p) => p.public === 0);
+	// 	if (private_pages.length === 0) return;
 
-		const app = {
-			app_name: "private",
-			app_title: __("My Workspaces"),
-			app_route: "/app/private",
-			app_logo_url: "/assets/frappe/images/frappe-framework-logo.svg",
-			workspaces: private_pages,
-		};
+	// 	const app = {
+	// 		app_name: "private",
+	// 		app_title: __("My Workspaces"),
+	// 		app_route: "/app/private",
+	// 		app_logo_url: "/assets/frappe/images/frappe-framework-logo.svg",
+	// 		workspaces: private_pages,
+	// 	};
 
-		frappe.boot.app_data_map["private"] = app;
-		$(`<div class="divider"></div>`).prependTo(app_switcher_menu);
-		$(`<div class="app-item" data-app-name="${app.app_name}"
-			data-app-route="${app.app_route}">
-			<a>
-				<div class="sidebar-item-icon">
-					<img
-						class="app-logo"
-						src="${app.app_logo_url}"
-						alt="${__("App Logo")}"
-					>
-				</div>
-				<span class="app-item-title">${app.app_title}</span>
-			</a>
-		</div>`).prependTo(app_switcher_menu);
-	}
+	// 	frappe.boot.app_data_map["private"] = app;
+	// 	$(`<div class="divider"></div>`).prependTo(app_switcher_menu);
+	// 	$(`<div class="app-item" data-app-name="${app.app_name}"
+	// 		data-app-route="${app.app_route}">
+	// 		<a>
+	// 			<div class="sidebar-item-icon">
+	// 				<img
+	// 					class="app-logo"
+	// 					src="${app.app_logo_url}"
+	// 					alt="${__("App Logo")}"
+	// 				>
+	// 			</div>
+	// 			<span class="app-item-title">${app.app_title}</span>
+	// 		</a>
+	// 	</div>`).prependTo(app_switcher_menu);
+	// }
 
 	setup_select_app(app_switcher_menu) {
 		app_switcher_menu.find(".app-item").on("click", (e) => {
@@ -154,7 +158,7 @@ frappe.ui.Sidebar = class Sidebar {
 				route += "/" + frappe.router.slug(ws.title);
 				frappe.set_route(route);
 			} else if (route.startsWith("/app")) {
-				frappe.set_route(route);
+				frappe.set_route('/app/hrms');
 				this.set_current_app(item.attr("data-app-name"));
 			} else {
 				// new page
@@ -168,34 +172,34 @@ frappe.ui.Sidebar = class Sidebar {
 			console.warn("set_current_app: app not defined");
 			return;
 		}
-		let app_data = frappe.boot.app_data_map[app] || frappe.boot.app_data_map["frappe"];
+		// let app_data = frappe.boot.app_data_map[app] || frappe.boot.app_data_map["frappe"];
 
-		this.wrapper
-			.find(".app-switcher-dropdown .sidebar-item-icon img")
-			.attr("src", app_data.app_logo_url);
-		this.wrapper.find(".app-switcher-dropdown .sidebar-item-label").html(app_data.app_title);
+		// this.wrapper
+		// 	.find(".app-switcher-dropdown .sidebar-item-icon img")
+		// 	.attr("src", app_data.app_logo_url);
+		// this.wrapper.find(".app-switcher-dropdown .sidebar-item-label").html(app_data.app_title);
 
-		$(".navbar-brand .app-logo").attr("src", app_data.app_logo_url);
+		// $(".navbar-brand .app-logo").attr("src", app_data.app_logo_url);
 
 		if (frappe.current_app === app) return;
 		frappe.current_app = app;
 
 		// re-render the sidebar
-		this.make_sidebar();
+		// this.make_sidebar();
 	}
 
-	add_website_select(app_switcher_menu) {
-		$(`<div class="divider"></div>`).appendTo(app_switcher_menu);
-		this.add_app_item(
-			{
-				app_name: "website",
-				app_title: __("Website"),
-				app_route: "/",
-				app_logo_url: "/assets/frappe/images/web.svg",
-			},
-			app_switcher_menu
-		);
-	}
+	// add_website_select(app_switcher_menu) {
+	// 	$(`<div class="divider"></div>`).appendTo(app_switcher_menu);
+	// 	this.add_app_item(
+	// 		{
+	// 			app_name: "website",
+	// 			app_title: __("Website"),
+	// 			app_route: "/",
+	// 			app_logo_url: "/assets/frappe/images/web.svg",
+	// 		},
+	// 		app_switcher_menu
+	// 	);
+	// }
 
 	setup_pages() {
 		this.set_all_pages();
@@ -222,8 +226,13 @@ frappe.ui.Sidebar = class Sidebar {
 				frappe.workspace_map[page.name] = page;
 				frappe.workspace_list.push(page);
 			}
+
 			this.make_sidebar();
 		}
+		
+		// find the first item to be selected
+		var firstSideBarItem = $('.standard-sidebar-item:first');
+		this.setup_select_app(firstSideBarItem)
 	}
 
 	make_sidebar() {
@@ -231,16 +240,50 @@ frappe.ui.Sidebar = class Sidebar {
 			this.wrapper.find(".standard-sidebar-section").remove();
 		}
 
-		let app_workspaces = frappe.boot.app_data_map[frappe.current_app || "frappe"].workspaces;
+		// let app_workspaces = frappe.boot.app_data_map[frappe.current_app || "frappe"].workspaces;
 
 		let parent_pages = this.all_pages.filter((p) => !p.parent_page).uniqBy((p) => p.name);
 		if (frappe.current_app === "private") {
 			parent_pages = parent_pages.filter((p) => !p.public);
 		} else {
-			parent_pages = parent_pages.filter((p) => p.public && app_workspaces.includes(p.name));
+			parent_pages = parent_pages.filter((p) => p.public);
 		}
 
-		this.build_sidebar_section("All", parent_pages);
+		console.log("parent_pages", frappe.boot.app_data);
+		this.$sidebar.empty();
+		var sideBarItemContainer = this.$sidebar;
+
+		for (var key in frappe.boot.app_data_map) {
+			var app = frappe.boot.app_data_map[key];
+			if (app.workspaces?.length && app.app_logo_url && app.app_title && app.app_route) {
+				var filteredPages = parent_pages.filter((p) => app.workspaces.includes(p.name));
+				if (!filteredPages.length) continue;
+				// if($(`#sidebar-item-${app.app_name}`).length) continue;
+
+				$(`
+				<div class="app-item-wrapper">
+					<div class="app-item" data-app-name="${app.app_name}"
+						data-app-route="${app.app_route}">
+						<a style="cursor:default">
+							<div class="sidebar-item-icon">
+								<img
+									class="app-logo"
+									src="${app.app_logo_url}"
+									alt="${__("App Logo")}"
+								>
+							</div>
+							<span class="app-item-title">${app.app_title}</span>
+						</a>
+					</div>
+					<div class="divider"></div>
+					<div id="sidebar-item-${app.app_name}"></div>
+				</div>
+				`).appendTo(sideBarItemContainer);
+				
+				// Build sidebar section
+				this.build_sidebar_section(app.app_name, filteredPages);
+			}
+		}
 
 		// Scroll sidebar to selected page if it is not in viewport.
 		this.wrapper.find(".selected").length &&
@@ -251,11 +294,13 @@ frappe.ui.Sidebar = class Sidebar {
 	}
 
 	build_sidebar_section(title, root_pages) {
+		if(Object.keys(root_pages).length === 0) return;
+
 		let sidebar_section = $(
 			`<div class="standard-sidebar-section nested-container" data-title="${title}"></div>`
 		);
 
-		this.prepare_sidebar(root_pages, sidebar_section, this.wrapper.find(".sidebar-items"));
+		this.prepare_sidebar(root_pages, sidebar_section, this.wrapper.find(`#sidebar-item-${title}`));
 
 		if (Object.keys(root_pages).length === 0) {
 			sidebar_section.addClass("hidden");
