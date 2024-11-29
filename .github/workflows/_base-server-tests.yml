@@ -1,4 +1,4 @@
-name: Tests Base
+name: Server Base
 on:
   workflow_call:
     inputs:
@@ -37,29 +37,15 @@ jobs:
         run: |
           echo "Evolution towards a set of (fast) unit tests which run without a DB connection is being planned"
   gen-idx-integration:
-    needs: unit-test
     name: Gen Integration Test Matrix
     runs-on: ubuntu-latest
+    if: ${{ inputs.fake-success == false }}
     outputs:
       indices: ${{ steps.set-indices.outputs.indices }}
     steps:
       - id: set-indices
         run: |
           indices=$(seq -s ',' 1 ${{ inputs.parallel-runs }}); echo "indices=[${indices}]" >> $GITHUB_OUTPUT
-
-  # This satisfies the required checks on pull requests if tests are intentionally skipped
-  integration-test-fake:
-    needs: gen-idx-integration
-    name: Integration
-    runs-on: ubuntu-latest
-    if: ${{ inputs.fake-success != false }}
-    strategy:
-      matrix:
-        db: ${{ fromJson(inputs.enable-postgres && '["mariadb", "postgres"]' || '["mariadb"]') }}
-        index: ${{ fromJson(needs.gen-idx-integration.outputs.indices) }}
-    steps:
-      - name: Pass skipped tests unconditionally
-        run: "echo Skipped"
 
   integration-test:
     needs: gen-idx-integration
@@ -73,7 +59,6 @@ jobs:
       # noisy 3rd party library warnings
       PYTHONWARNINGS: "module,ignore:::babel.messages.extract"
       DB_ROOT_PASSWORD: db_root
-      COVERAGE_RCFILE: ~/frappe-bench/apps/frappe/.coveragerc
 
     strategy:
       fail-fast: false
@@ -111,7 +96,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
           node-version: ${{ inputs.node-version }}
           disable-socketio: true
-          disable-redis-socketio: true
+          enable-coverage: ${{ inputs.enable-coverage }}
           db-root-password: ${{ env.DB_ROOT_PASSWORD }}
           db: ${{ matrix.db }}
         env:
@@ -119,7 +104,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          cd ~/frappe-bench || exit
+          source ${GITHUB_WORKSPACE}/env/bin/activate
           bench --site test_site \
             run-parallel-tests \
             --app "${{ github.event.repository.name }}" \
@@ -156,7 +141,7 @@ jobs:
         if: inputs.enable-coverage
         with:
           name: coverage-${{ matrix.db }}-${{ matrix.index }}
-          path: ~/frappe-bench/sites/*-coverage*.xml
+          path: ./sites/*-coverage*.xml
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
@@ -165,10 +150,34 @@ jobs:
       - name: Show bench output
         if: ${{ always() }}
         run: |
-          cd ~/frappe-bench || exit
           cat bench_start.log || true
           cd logs
-          for f in ./*.log*; do
+          for f in ${GITHUB_WORKSPACE}/*.log*; do
             echo "Printing log: $f";
             cat $f
           done
+
+
+  # TIP: Use these for checks, e.g. Server / Tests / Success
+  success:
+    name: Success
+    needs: [unit-test, integration-test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Unit '${{ needs.unit-test.result }}' / Integration '${{ needs.integration-test.result }}'
+        shell: python
+        run: |
+          stati = [
+            '${{ needs.unit-test.result }}',
+            '${{ needs.integration-test.result }}',
+          ]
+
+          nopass = ["failure", "cancelled"]
+          dopass = ["success", "skipped"]
+          if any(r in nopass for r in stati):
+            exit(1)
+          if all(r in dopass for r in stati):
+            exit(0)
+          exit(1)
+

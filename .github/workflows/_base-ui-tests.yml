@@ -1,4 +1,4 @@
-name: Tests Base
+name: UI Base
 on:
   workflow_call:
     inputs:
@@ -28,26 +28,13 @@ jobs:
   gen-idx-integration:
     name: Gen Integration Test Matrix
     runs-on: ubuntu-latest
+    if: ${{ inputs.fake-success == false }}
     outputs:
       indices: ${{ steps.set-indices.outputs.indices }}
     steps:
       - id: set-indices
         run: |
           indices=$(seq -s ',' 1 ${{ inputs.parallel-runs }}); echo "indices=[${indices}]" >> $GITHUB_OUTPUT
-
-  # This satisfies the required checks on pull requests if tests are intentionally skipped
-  ui-test-fake:
-    needs: gen-idx-integration
-    name: Integration
-    runs-on: ubuntu-latest
-    if: ${{ inputs.fake-success != false }}
-    strategy:
-      matrix:
-        db: ["mariadb"]
-        index: ${{ fromJson(needs.gen-idx-integration.outputs.indices) }}
-    steps:
-      - name: Pass skipped tests unconditionally
-        run: "echo Skipped"
 
   ui-test:
     needs: gen-idx-integration
@@ -61,7 +48,6 @@ jobs:
       # noisy 3rd party library warnings
       PYTHONWARNINGS: "ignore"
       DB_ROOT_PASSWORD: db_root
-      COVERAGE_RCFILE: ~/frappe-bench/apps/frappe/.coveragerc
 
     strategy:
       fail-fast: false
@@ -82,14 +68,14 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
           node-version: ${{ inputs.node-version }}
-          build-assets: false
+          build-assets: true
           enable-coverage: ${{ inputs.enable-coverage }}
           db-root-password: ${{ env.DB_ROOT_PASSWORD }}
           db: ${{ matrix.db }}
 
       - name: Verify yarn.lock
         run: |
-          cd ~/frappe-bench/apps/${{ github.event.repository.name }}
+          cd ${GITHUB_WORKSPACE}/apps/${{ github.event.repository.name }}
           git diff --exit-code yarn.lock
 
       - name: Cache cypress binary
@@ -100,26 +86,21 @@ jobs:
 
       - name: Instrument Source Code
         run: |
-          cd ~/frappe-bench/apps/${{ github.event.repository.name }}
+          cd ${GITHUB_WORKSPACE}/apps/${{ github.event.repository.name }}
           npx nyc instrument \
             -x '${{ github.event.repository.name }}/public/dist/**' \
             -x '${{ github.event.repository.name }}/public/js/lib/**' \
             -x '**/*.bundle.js' --compact=false --in-place ${{ github.event.repository.name }}
 
-      - name: Build
-        run: |
-          cd ~/frappe-bench/
-          bench build --apps ${{ github.event.repository.name }}
-
       - name: Site Setup
         run: |
-          cd ~/frappe-bench/
+          source ${GITHUB_WORKSPACE}/env/bin/activate
           bench --site test_site execute frappe.utils.install.complete_setup_wizard
           bench --site test_site execute frappe.tests.ui_test_helpers.create_test_user
 
       - name: Run Tests
         run: |
-          cd ~/frappe-bench/
+          source ${GITHUB_WORKSPACE}/env/bin/activate
           bench --site test_site \
             run-ui-tests ${{ github.event.repository.name }} \
               --with-coverage \
@@ -134,29 +115,54 @@ jobs:
         run: |
           ps -ef | grep "[f]rappe serve" | awk '{print $2}' | xargs kill -s SIGINT
           sleep 5
-          ( tail -f ~/frappe-bench/sites/*-coverage*.xml & ) | grep -q "\/coverage"
+          ( tail -f ${GITHUB_WORKSPACE}/sites/*-coverage*.xml & ) | grep -q "\/coverage"
 
       - name: Upload JS coverage data
         uses: actions/upload-artifact@v3
         if: inputs.enable-coverage
         with:
           name: coverage-js-${{ matrix.index }}
-          path: ~/frappe-bench/apps/${{ github.event.repository.name }}/.cypress-coverage/clover.xml
+          path: ./apps/${{ github.event.repository.name }}/.cypress-coverage/clover.xml
 
       - name: Upload coverage data
         uses: actions/upload-artifact@v3
         if: inputs.enable-coverage
         with:
           name: coverage-py-${{ matrix.index }}
-          path: ~/frappe-bench/sites/*-coverage*.xml
+          path: ./sites/*-coverage*.xml
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() && contains( github.event.pull_request.labels.*.name, 'debug-gha') }}
 
       - name: Show bench output
         if: ${{ always() }}
         run: |
-          cd ~/frappe-bench || exit
           cat bench_start.log || true
           cd logs
-          for f in ./*.log*; do
+          for f in ${GITHUB_WORKSPACE}/*.log*; do
             echo "Printing log: $f";
             cat $f
           done
+
+  # TIP: Use these for checks, e.g. UI / Tests (Cypress) / Success
+  success:
+    name: Success
+    needs: [ui-test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: UI Test '${{ needs.ui-test.result }}'
+        shell: python
+        run: |
+          stati = [
+            '${{ needs.ui-test.result }}',
+          ]
+
+          nopass = ["failure", "cancelled"]
+          dopass = ["success", "skipped"]
+          if any(r in nopass for r in stati):
+            exit(1)
+          if all(r in dopass for r in stati):
+            exit(0)
+          exit(1)
