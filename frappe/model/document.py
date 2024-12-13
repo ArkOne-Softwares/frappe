@@ -392,6 +392,7 @@ class Document(BaseDocument, DocRef):
 		self.flags.in_insert = True
 
 		if self.get("amended_from"):
+			self.validate_amended_from()
 			self.copy_attachments_from_amended_from()
 
 		relink_mismatched_files(self)
@@ -480,6 +481,13 @@ class Document(BaseDocument, DocRef):
 
 		return self
 
+	def validate_amended_from(self):
+		if frappe.db.get_value(self.doctype, self.get("amended_from"), "docstatus") != 2:
+			message = _(
+				"{0} cannot be amended because it is not cancelled. Please cancel the document before creating an amendment."
+			).format(frappe.utils.get_link_to_form(self.doctype, self.get("amended_from")))
+			frappe.throw(message, title=_("Amendment Not Allowed"))
+
 	def copy_attachments_from_amended_from(self):
 		"""Copy attachments from `amended_from`"""
 		from frappe.desk.form.load import get_attachments
@@ -510,7 +518,7 @@ class Document(BaseDocument, DocRef):
 
 	def update_child_table(self, fieldname: str, df: Optional["DocField"] = None):
 		"""sync child table for given fieldname"""
-		df: "DocField" = df or self.meta.get_field(fieldname)
+		df: DocField = df or self.meta.get_field(fieldname)
 		all_rows = self.get(df.fieldname)
 
 		# delete rows that do not match the ones in the document
@@ -1717,8 +1725,16 @@ class Document(BaseDocument, DocRef):
 			return
 
 		if date_diff(to_date, from_date) < 0:
+			table_row = ""
+			if self.meta.istable:
+				table_row = _("{0} row #{1}: ").format(
+					_(frappe.unscrub(self.parentfield)),
+					self.idx,
+				)
+
 			frappe.throw(
-				_("{0} must be after {1}").format(
+				table_row
+				+ _("{0} must be after {1}").format(
 					frappe.bold(_(self.meta.get_label(to_date_field))),
 					frappe.bold(_(self.meta.get_label(from_date_field))),
 				),

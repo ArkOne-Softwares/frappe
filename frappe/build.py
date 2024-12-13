@@ -78,8 +78,8 @@ def get_assets_link(frappe_head) -> str:
 	import requests
 
 	tag = getoutput(
-		r"cd ../apps/frappe && git show-ref --tags -d | grep %s | sed -e 's,.*"
-		r" refs/tags/,,' -e 's/\^{}//'" % frappe_head
+		r"cd ../apps/frappe && git show-ref --tags -d | grep {} | sed -e 's,.*"
+		r" refs/tags/,,' -e 's/\^{{}}//'".format(frappe_head)
 	)
 
 	if tag:
@@ -385,8 +385,9 @@ def make_asset_dirs(hard_link=False):
 		try:
 			print(start_message, end="\r")
 			link_assets_dir(source, target, hard_link=hard_link)
-		except Exception:
-			print(fail_message, end="\r")
+		except Exception as e:
+			print(e)
+			print(fail_message)
 
 	click.echo(unstrip(click.style("✔", fg="green") + " Application Assets Linked") + "\n")
 

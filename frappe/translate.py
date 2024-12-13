@@ -132,6 +132,16 @@ def get_messages_for_boot():
 	return get_all_translations(frappe.local.lang)
 
 
+@frappe.whitelist(allow_guest=True)
+def get_app_translations():
+	if frappe.session.user != "Guest":
+		language = frappe.db.get_value("User", frappe.session.user, "language")
+	else:
+		language = frappe.db.get_single_value("System Settings", "language")
+
+	return get_all_translations(language)
+
+
 def get_all_translations(lang: str) -> dict[str, str]:
 	"""Load and return the entire translations dictionary for a language from apps + user translations.
 
@@ -471,8 +481,8 @@ def get_messages_from_report(name):
 	)
 
 	if report.columns:
-		context = (
-			"Column of report '%s'" % report.name
+		context = "Column of report '{}'".format(
+			report.name
 		)  # context has to match context in `prepare_columns` in query_report.js
 		messages.extend([(None, report_column.label, context) for report_column in report.columns])
 
